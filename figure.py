@@ -42,11 +42,10 @@ class Figure:
     def _rotation_rule_wall(self, next_side, wall_bricks:list[Brick], grid) -> bool:
         new_bricks:list[Brick] = self.sides[next_side](grid, self.bricks[0].x, self.bricks[0].y)
         
-        return all([not pygame.Rect.colliderect(b.rect, wb.rect) for b in new_bricks for wb in wall_bricks ])
+        return all([ not pygame.Rect.colliderect(b.rect, wb.rect) for b in new_bricks for wb in wall_bricks ])
     
     def _rotation_rule_screen(self, g_h, g_w) -> bool:
         return False
-
 
     def is_wall(self) -> bool:
         return len(self.bricks) == len([i for i in self.bricks if i.is_wall])
