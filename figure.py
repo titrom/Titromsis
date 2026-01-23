@@ -62,9 +62,14 @@ class Figure:
     def draw(self, screen):
         for brick in self.bricks:
             brick.draw(screen)
-            
-class StickFigure(Figure):
 
+
+
+class StickFigure(Figure):
+    '''
+    Перенести в Grid.
+    Записи по типу g[c_y][c_x].должны быть типа отдельным методом. А лучше если сетак будет говорить занета ли ее ячейка, если все нужные ячейки заняты то шлем нахуй
+    '''
     def __init__(self, grid, ceil_x, ceil_y, side:int):
         super().__init__(grid, ceil_x, ceil_y, side)
 

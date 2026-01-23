@@ -9,6 +9,8 @@ from wall import Wall
 
 import random
 
+from grid import Grid
+
 class GameState:
     def handle_events(self, event:pygame.event.Event):
         pass
@@ -20,31 +22,26 @@ class GameState:
         pass
 
 class PlayingState(GameState):
-    def __init__(self, top:int= -5, bottom:int =0, ceil_x:int = 35, ceil_y:int=35):
+    def __init__(self):
         super().__init__()
 
-        self.grid = [[pygame.Rect(x * ceil_x, y * ceil_y, ceil_x, ceil_y) for x in range(WIDTH // ceil_x)] for y in range(top , (HEIGHT - bottom) // ceil_y)]
+        self.grid = Grid()
 
-        self.grid_w = len(self.grid[0])
-        self.grid_h = len(self.grid)
-        print(self.grid_w, self.grid_h)
-        self.figure = StickFigure(self.grid, self.grid_w // 2, 0, 0)
-        self.wall = Wall(self.grid_w, self.grid_h)
+        self.figure = StickFigure(self.grid, self.grid.w // 2, 0, 0)
+        self.wall = Wall(self.grid.w, self.grid.h)
         self.dx = 0
         self.dy = 1
-
-        self.offset = {"top": top, "bottom": bottom}
         self.fast_y = False
 
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
-                self.figure.rotate(self.grid, self.grid_w, True)
+                self.figure.rotate(self.grid, True)
             elif event.key == pygame.K_q:
-                self.figure.rotate(self.grid, self.grid_w, False)
+                self.figure.rotate(self.grid, False)
 
     def _add_figure(self):
-        self.figure = StickFigure(self.grid, self.grid_w // 2, 0, random.randint(0,0))
+        self.figure = StickFigure(self.grid, self.grid.w // 2, 0, random.randint(0,0))
     
     def _add_wall(self):
         for brick in self.figure.bricks:
@@ -61,7 +58,9 @@ class PlayingState(GameState):
         if keys[pygame.K_s]:
             self.fast_y = True
 
-
+        '''
+        Перенести в Grid
+        '''
         if game.frame % 6 == 0:
             is_wall_colid = False
             for brick_wall in self.wall.bricks:
@@ -72,7 +71,9 @@ class PlayingState(GameState):
                 self.figure.move(self.dx, 0)
             self.dx = 0                
 
-                
+        '''
+        Перенести в Grid
+        '''       
         if game.frame % (30 if not self.fast_y else 2) == 0:
             is_wall_col = any([b.is_up(self.wall.top()) for b in self.figure.bricks]) if len(self.wall.bricks) != 0 else False
 
