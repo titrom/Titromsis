@@ -39,15 +39,15 @@ class PlayingState(GameState):
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
-                self.figure.rotate(self.grid)
+                self.figure.rotate(self.grid, self.grid_w, True)
             elif event.key == pygame.K_q:
-                self.figure.rotate(self.grid)
+                self.figure.rotate(self.grid, self.grid_w, False)
 
     def _add_figure(self):
-        self.figure = StickFigure(self.grid, self.grid_w // 2, 0, random.randint(0,3))
+        self.figure = StickFigure(self.grid, self.grid_w // 2, 0, random.randint(0,0))
     
     def _add_wall(self):
-        for brick in self.figure.bottom():
+        for brick in self.figure.bricks:
             brick.toWall
         self.wall.add_bricks(self.figure.bricks)
         self._add_figure()
@@ -74,12 +74,12 @@ class PlayingState(GameState):
 
                 
         if game.frame % (30 if not self.fast_y else 2) == 0:
-            is_wall_col = any([b.is_up(self.wall.top()) for b in self.figure.bottom()]) if len(self.wall.bricks) != 0 else False
+            is_wall_col = any([b.is_up(self.wall.top()) for b in self.figure.bricks]) if len(self.wall.bricks) != 0 else False
 
             if is_wall_col:
                     self._add_wall()
             if not is_wall_col:
-                if any([b.y + self.dy >= self.grid_h for b in self.figure.bottom()]):
+                if any([b.y + self.dy >= self.grid_h for b in self.figure.bricks]):
                     self._add_wall()
                 else:
                     self.figure.move(0, self.dy)
