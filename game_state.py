@@ -11,6 +11,8 @@ import random
 
 from grid import Grid
 
+from ceil import Ceil
+
 class GameState:
     def handle_events(self, event:pygame.event.Event):
         pass
@@ -45,8 +47,9 @@ class PlayingState(GameState):
     
     def _add_wall(self):
         for brick in self.figure.bricks:
-            brick.toWall
+            brick.toWall()
         self.wall.add_bricks(self.figure.bricks)
+        self.grid.occupy_ceils([Ceil(b.x, b.y, b.rect) for b in self.figure.bricks])
         self._add_figure()
 
     def update(self, game):
@@ -58,29 +61,25 @@ class PlayingState(GameState):
         if keys[pygame.K_s]:
             self.fast_y = True
 
-        '''
-        Перенести в Grid
-        '''
+
         if game.frame % 6 == 0:
             is_wall_colid = False
             for brick_wall in self.wall.bricks:
                 if any((b.x + self.dx, b.y) == (brick_wall.x, brick_wall.y) for b in self.figure.bricks):
                         is_wall_colid = True
 
-            if all([b.x + self.dx < self.grid_w and b.x + self.dx >= 0 for b in self.figure.bricks]) and not is_wall_colid:
+            if all([b.x + self.dx < self.grid.w and b.x + self.dx >= 0 for b in self.figure.bricks]) and not is_wall_colid:
                 self.figure.move(self.dx, 0)
             self.dx = 0                
 
-        '''
-        Перенести в Grid
-        '''       
+    
         if game.frame % (30 if not self.fast_y else 2) == 0:
             is_wall_col = any([b.is_up(self.wall.top()) for b in self.figure.bricks]) if len(self.wall.bricks) != 0 else False
 
             if is_wall_col:
                     self._add_wall()
             if not is_wall_col:
-                if any([b.y + self.dy >= self.grid_h for b in self.figure.bricks]):
+                if any([b.y + self.dy >= self.grid.h + self.grid.offset["top"] for b in self.figure.bricks]):
                     self._add_wall()
                 else:
                     self.figure.move(0, self.dy)
@@ -88,7 +87,7 @@ class PlayingState(GameState):
             self.fast_y = False
 
         if len(self.wall.bricks):
-            if min([b.y for b in self.wall.top()]) + self.offset["top"] < 0:
+            if min([b.y for b in self.wall.top()]) + self.grid.offset["top"] <= 0:
                 game.set_state(PlayingState())
 
         self.figure.update(self.grid)

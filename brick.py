@@ -1,23 +1,29 @@
 import pygame
 
+from ceil import Ceil
+
+from grid import Grid
+
 class Brick:
 
-    def __init__(self, rect:pygame.Rect, ceil_x, ceil_y):
-        self.rect = rect
-        self.x = ceil_x
-        self.y = ceil_y
+    def __init__(self, ceil:Ceil):
+        self.is_create = ceil != None
+
+        if not self.is_create:
+            return None
+        self.x = ceil.x
+        self.y = ceil.y
+        self.rect = ceil.rect
         self.is_wall = False
 
     def toWall(self):
         self.is_wall = True
     
     def move(self, dx, dy):
-
         self.x += dx
         self.y += dy
     
     def moveTo(self, x, y):
-
         self.x, self.y = x, y
 
     def is_up(self, bricks):
@@ -29,8 +35,10 @@ class Brick:
     
         return result
 
-    def update(self, grid):
-        self.rect = grid[self.y][self.x]
+    def update(self, grid:Grid):
+        new_rect = grid.get_ceil(self.x, self.y)
+        if new_rect != None:
+            self.rect = new_rect.rect
 
     def draw(self, screen):
         pygame.draw.rect(screen, (200, 50, 50), self.rect) 
