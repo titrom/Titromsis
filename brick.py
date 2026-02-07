@@ -6,7 +6,7 @@ from grid import Grid
 
 class Brick:
 
-    def __init__(self, ceil:Ceil):
+    def __init__(self, ceil:Ceil, color=(200, 50, 50)):
         self.is_create = ceil != None
 
         if not self.is_create:
@@ -15,6 +15,8 @@ class Brick:
         self.y = ceil.y
         self.rect = ceil.rect
         self.is_wall = False
+
+        self.color = color
 
     def toWall(self):
         self.is_wall = True
@@ -41,4 +43,4 @@ class Brick:
             self.rect = new_rect.rect
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (200, 50, 50), self.rect) 
+        pygame.draw.rect(screen, self.color, self.rect) 

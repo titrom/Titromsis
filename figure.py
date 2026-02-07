@@ -17,10 +17,11 @@ class SideFigure(Enum):
     LEFT = 3
 
 class Figure:
-    def __init__(self, grid, ceil_x, ceil_y, side:int):
+    def __init__(self, grid, ceil_x, ceil_y, side:int, color=(200, 50, 50)):
         self.bricks:list[Brick] = []
         self.sides:Dict[SideFigure, Callable[..., Any]] = {}
         self.side = SideFigure(side)
+        self.color = color
 
     def move(self, dx, dy):
         for brick in self.bricks:
@@ -55,7 +56,7 @@ class Figure:
         return len(self.bricks) == len([i for i in self.bricks if i.is_wall])        
 
     def update(self, grid):
-        all_connect_bricks = [i for i in self.bricks if i.is_wall]
+        all_connect_bricks = [b for b in self.bricks if b.is_wall]
         if len(all_connect_bricks) >= 1:
             for brick in self.bricks:
                 brick.toWall()
@@ -65,11 +66,12 @@ class Figure:
 
     def draw(self, screen):
         for brick in self.bricks:
+            brick.color = self.color
             brick.draw(screen)
 
 class StickFigure(Figure):
     def __init__(self, grid, ceil_x, ceil_y, side:int):
-        super().__init__(grid, ceil_x, ceil_y, side)
+        super().__init__(grid, ceil_x, ceil_y, side, (50, 200, 50))
 
         self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
             Brick(g.get_ceil(c_x, c_y)),
@@ -100,4 +102,138 @@ class StickFigure(Figure):
         ]
 
         self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
-        
+
+
+class GFigure(Figure):
+    def __init__(self, grid, ceil_x, ceil_y, side):
+        super().__init__(grid, ceil_x, ceil_y, side, (50, 50, 200))
+        self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x + 1, c_y - 1)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+        ]
+        self.sides[SideFigure.DOWN] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+            Brick(g.get_ceil(c_x - 1, c_y + 1)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+        ]
+        self.sides[SideFigure.RIGHT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x-1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y +1)),
+        ]
+        self.sides[SideFigure.LEFT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y - 1)),
+        ]
+
+        self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
+
+
+class AntiGFigure(Figure):
+    def __init__(self, grid, ceil_x, ceil_y, side):
+        super().__init__(grid, ceil_x, ceil_y, side, (200, 200, 50))
+        self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x - 1, c_y - 1)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+        ]
+        self.sides[SideFigure.DOWN] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+            Brick(g.get_ceil(c_x + 1, c_y + 1)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+        ]
+        self.sides[SideFigure.RIGHT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x- 1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y - 1)),
+        ]
+        self.sides[SideFigure.LEFT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y + 1)),
+        ]
+        self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
+
+
+class ZFigure(Figure):
+    def __init__(self, grid, ceil_x, ceil_y, side):
+        super().__init__(grid, ceil_x, ceil_y, side, (50, 200, 200))
+        self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x + 1, c_y - 1)),
+        ]
+        self.sides[SideFigure.RIGHT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y + 1)),
+        ]
+        self.sides[SideFigure.DOWN] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+            Brick(g.get_ceil(c_x - 1, c_y + 1)),
+        ]
+        self.sides[SideFigure.LEFT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y - 1)),
+        ]
+        self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
+
+class AntiZFigure(Figure):
+    def __init__(self, grid, ceil_x, ceil_y, side):
+        super().__init__(grid, ceil_x, ceil_y, side, (200, 50, 200))
+        self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x - 1, c_y - 1)),
+        ]
+        self.sides[SideFigure.RIGHT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y - 1)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+        ]
+        self.sides[SideFigure.DOWN] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x, c_y + 1)),
+            Brick(g.get_ceil(c_x + 1, c_y + 1)),
+        ]
+        self.sides[SideFigure.LEFT] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y)),
+            Brick(g.get_ceil(c_x - 1, c_y + 1)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+        ]
+        self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
+
+
+class CubeFigure(Figure):
+    def __init__(self, grid, ceil_x, ceil_y, side):
+        super().__init__(grid, ceil_x, ceil_y, side, (200, 200, 200))
+        self.sides[SideFigure.UP] = lambda g, c_x, c_y: [
+            Brick(g.get_ceil(c_x, c_y)),
+            Brick(g.get_ceil(c_x + 1, c_y)),
+            Brick(g.get_ceil(c_x, c_y - 1)),
+            Brick(g.get_ceil(c_x + 1, c_y - 1)),
+        ]
+        self.sides[SideFigure.RIGHT] = self.sides[SideFigure.UP]
+        self.sides[SideFigure.DOWN] = self.sides[SideFigure.UP]
+        self.sides[SideFigure.LEFT] = self.sides[SideFigure.UP]
+        self.bricks = self.sides[self.side](grid, ceil_x, ceil_y)
