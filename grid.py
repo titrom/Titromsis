@@ -23,7 +23,7 @@ class Grid:
     def is_busy_ceil(self, ceils:list[Ceil]) -> int|bool:
         for ceil in ceils:
             g_ceil = self.get_ceil(ceil.x, ceil.y)
-            if g_ceil.is_busy:
+            if g_ceil != None and g_ceil.is_busy:
                 return True
         return False
     

@@ -7,7 +7,7 @@ class Wall:
     def __init__(self, grid_w, grid_h):
         self.grid_h = grid_h
         self.grid_w = grid_w
-        self.position_map:dict[tuple[int, int], Brick] = {}
+        self.position_map: dict[tuple[int, int], Brick] = {}
         self.full_lines = set()
 
     def update_full_lines(self):
@@ -32,7 +32,7 @@ class Wall:
     
     def update(self, grid, game, add_score_event):
         self.tetris_search(add_score_event)
-        self.lines_down(game.frame)
+        # self.lines_down(game.frame)
         new_bricks = [b for b in self.position_map.values()]
         for brick in new_bricks:
             brick.update(grid)
@@ -68,7 +68,7 @@ class Wall:
             [self.remove_brick_at_position(b.x, b.y) for b in bricks_in_line]
             lines_to_remove += 1
 
-        if lines_to_remove != 0:
+        if lines_to_remove:
             add(lines_to_remove)
 
         self.update_full_lines()

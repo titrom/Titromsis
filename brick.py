@@ -7,8 +7,7 @@ from grid import Grid
 class Brick:
 
     def __init__(self, ceil:Ceil, color=(200, 50, 50)):
-        self.is_create = ceil != None
-
+        self.is_create = ceil is not None
         if not self.is_create:
             return None
         self.x = ceil.x
@@ -17,6 +16,7 @@ class Brick:
         self.is_wall = False
 
         self.color = color
+
 
     def toWall(self):
         self.is_wall = True

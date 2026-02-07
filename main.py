@@ -1,5 +1,11 @@
 from game import Game
 
 
-g = Game()
-g.run()
+def main() -> None:
+    g = Game()
+    g.run()
+
+if __name__ == "__main__":
+    main()
+
+

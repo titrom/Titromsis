@@ -9,7 +9,8 @@ class FigureFactory:
             2: lambda: AntiGFigure(grid, x, y, side),
             3: lambda: ZFigure(grid, x, y, side),
             4: lambda: AntiZFigure(grid, x, y, side),
-            5: lambda: CubeFigure(grid, x, y, side)
+            5: lambda: CubeFigure(grid, x, y, side), 
+            6: lambda: TFigure(grid, x, y, side)
         }
         creator = figures.get(fig_type)
 
